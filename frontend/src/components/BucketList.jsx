@@ -13,7 +13,7 @@ export default function BucketList() {
   useEffect(() => {
     const fetchUserTasks = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/bucketlist/users");
+        const res = await fetch("https://openup-0vcs.onrender.com/api/bucketlist/users");
         const data = await res.json();
         setUserTasks(data.userTasks || []);
       } catch (err) {
@@ -32,7 +32,7 @@ export default function BucketList() {
 
   const markCompleted = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/bucketlist/${id}/complete`, {
+      await fetch(`https://openup-0vcs.onrender.com/api/bucketlist/${id}/complete`, {
         method: "PATCH",
       });
       setUserTasks((prev) =>
