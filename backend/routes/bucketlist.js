@@ -11,6 +11,8 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { text, description, userId } = req.body;
 
+    console.log("Received values =>", { text, description, userId });
+
     if (!text || !userId) {
       return res.status(400).json({ message: "Missing text or userId" });
     }
@@ -18,35 +20,32 @@ router.post("/", upload.single("image"), async (req, res) => {
     let imageUrl = "";
 
     if (req.file) {
-      // Convert image buffer to base64
       const base64Image = `data:${
         req.file.mimetype
       };base64,${req.file.buffer.toString("base64")}`;
 
-      // Upload to Cloudinary with NO folder or timestamp
-      const result = await cloudinary.uploader.upload(base64Image); // ✅ SIMPLE UPLOAD
-
-      imageUrl = result.secure_url; // This can be shown in frontend
+      const result = await cloudinary.uploader.upload(base64Image);
+      imageUrl = result.secure_url;
     }
 
-    // Create and save the new item
     const newItem = new BucketItem({
       text,
       description,
-      createdBy: userId,
+      createdBy: userId, // Should match schema!
       image: imageUrl,
     });
 
     const savedItem = await newItem.save();
     res.status(201).json(savedItem);
   } catch (err) {
-    console.error("❌ POST /bucketlist Error:", err);
+    console.error("❌ POST /bucketlist Error:", err.message);
     res.status(500).json({
       message: "Server error during bucket item creation",
       error: err.message,
     });
   }
 });
+
 
 // ✅ Get all bucket items
 router.get("/list", async (req, res) => {
