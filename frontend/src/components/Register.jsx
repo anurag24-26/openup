@@ -1,22 +1,38 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
+    if (!name.trim() || !password.trim()) {
+      return alert("❗ Please fill out all fields.");
+    }
+
+    setLoading(true);
+
     try {
       const res = await fetch("https://openup-0vcs.onrender.com/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
+
       const data = await res.json();
-      if (!res.ok) return alert(data.message);
-      alert("✅ Registered Successfully: " + data.userId);
+      if (!res.ok) {
+        return alert("❌ " + (data.message || "Registration failed"));
+      }
+
+      alert("✅ Registered Successfully!");
+      navigate("/login");
     } catch (err) {
-      alert("❌ Error registering");
+      alert("❌ Network error during registration.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,7 +48,8 @@ export default function Register() {
           placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+          disabled={loading}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none disabled:opacity-60"
         />
 
         <input
@@ -40,14 +57,20 @@ export default function Register() {
           placeholder="Create Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+          disabled={loading}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none disabled:opacity-60"
         />
 
         <button
           onClick={handleRegister}
-          className="w-full bg-indigo-500 text-white font-semibold py-3 rounded-lg hover:bg-indigo-600 transition"
+          disabled={loading}
+          className={`w-full py-3 rounded-lg font-semibold transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed text-white"
+              : "bg-indigo-500 text-white hover:bg-indigo-600"
+          }`}
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </button>
 
         <p className="text-center text-sm text-gray-600">
