@@ -6,13 +6,18 @@ export default function FormPost({ setSuccessMessage }) {
   const [image, setImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const userId = localStorage.getItem("userName");
+  const userName = localStorage.getItem("userName"); // 🔁 clear variable name
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userId) {
+    if (!userName) {
       alert("❌ Please login first to add your dream.");
+      return;
+    }
+
+    if (!text || !description) {
+      alert("❗ Please fill all fields.");
       return;
     }
 
@@ -20,7 +25,7 @@ export default function FormPost({ setSuccessMessage }) {
     const formData = new FormData();
     formData.append("text", text);
     formData.append("description", description);
-    formData.append("userName", userId);
+    formData.append("userName", userName); // ✅ send username, not userId
     if (image) formData.append("image", image);
 
     try {
@@ -32,7 +37,6 @@ export default function FormPost({ setSuccessMessage }) {
       const data = await res.json();
       if (!res.ok) return alert(data.message);
 
-      // Reset form & show navbar flip message
       setText("");
       setDescription("");
       setImage(null);
