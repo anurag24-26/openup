@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Bucket List</title>
+    <script defer src="script.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 p-4">
+    <!-- Login Form -->
+    <div id="loginDiv" class="max-w-md mx-auto bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Login to Bucket List</h2>
+      <input
+        id="nameInput"
+        type="text"
+        placeholder="Name"
+        class="w-full mb-2 p-2 border rounded"
+      />
+      <input
+        id="passInput"
+        type="password"
+        placeholder="Password"
+        class="w-full mb-4 p-2 border rounded"
+      />
+      <button
+        id="loginBtn"
+        class="bg-blue-500 text-white px-4 py-2 rounded w-full"
+      >
+        Login
+      </button>
+    </div>
+
+    <!-- Bucket Section -->
+    <div id="bucketSection" class="hidden max-w-2xl mx-auto mt-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">My Bucket List</h2>
+        <button id="logoutBtn" class="text-red-500 font-semibold">
+          Logout
+        </button>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <input
+          id="itemText"
+          type="text"
+          placeholder="What do you want to do?"
+          class="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          id="itemDesc"
+          type="text"
+          placeholder="Optional description..."
+          class="w-full mb-2 p-2 border rounded"
+        />
+        <input
+          id="itemImage"
+          type="file"
+          accept="image/*"
+          class="w-full mb-2"
+        />
+        <button
+          id="addBtn"
+          class="bg-green-500 text-white px-4 py-2 rounded mt-2"
+        >
+          Add to Bucket List
+        </button>
+      </div>
+
+      <ul id="bucketList" class="space-y-4"></ul>
+    </div>
+  </body>
+</html>
