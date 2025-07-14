@@ -24,7 +24,7 @@ export default function FormPost({ setSuccessMessage }) {
     if (image) formData.append("image", image);
 
     try {
-      const res = await fetch("http://localhost:5000/api/bucketlist", {
+      const res = await fetch("https://openup-0vcs.onrender.com/api/bucketlist", {
         method: "POST",
         body: formData,
       });
