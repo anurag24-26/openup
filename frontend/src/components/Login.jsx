@@ -4,28 +4,39 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Login() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // <-- use this for navigation
+  const [loading, setLoading] = useState(false); // New state to track login status
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
+    if (!name.trim() || !password.trim()) {
+      alert("❗ Please enter both name and password.");
+      return;
+    }
+
+    setLoading(true);
+
     try {
       const res = await fetch("https://openup-0vcs.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
-      const data = await res.json();
 
+      const data = await res.json();
       if (!res.ok) {
-        return alert(data.message);
+        alert("❌ " + (data.message || "Login failed"));
+        return;
       }
 
-      // ✅ Save the userId (or name) locally for Navbar or future use
-      localStorage.setItem("userName", data.user.name); // for Navbar display
-      localStorage.setItem("user_Id", data.user._id); // for backend fetching
+      localStorage.setItem("userName", data.user.name);
+      localStorage.setItem("user_Id", data.user._id);
 
-      alert("✅ Login Successful: " + data.userId);
+      alert("✅ Login Successful!");
       navigate("/dashboard");
     } catch (err) {
-      alert("❌ Error logging in");
+      alert("❌ Network error during login.");
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -41,7 +52,8 @@ export default function Login() {
           placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none"
+          disabled={loading}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none disabled:opacity-60"
         />
 
         <input
@@ -49,14 +61,20 @@ export default function Login() {
           placeholder="Your Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none"
+          disabled={loading}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none disabled:opacity-60"
         />
 
         <button
           onClick={handleLogin}
-          className="w-full bg-pink-500 text-white font-semibold py-3 rounded-lg hover:bg-pink-600 transition"
+          disabled={loading}
+          className={`w-full py-3 rounded-lg font-semibold transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed text-white"
+              : "bg-pink-500 text-white hover:bg-pink-600"
+          }`}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <p className="text-center text-sm text-gray-600">
