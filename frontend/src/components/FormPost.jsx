@@ -6,7 +6,7 @@ export default function FormPost({ setSuccessMessage }) {
   const [image, setImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const userId = localStorage.getItem("userName");
+  const userId = localStorage.getItem("user_Id");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
