@@ -4,9 +4,12 @@ const bucketItemSchema = new mongoose.Schema(
   {
     text: { type: String, required: true },
     description: String,
-    image: String, // Uncomment if you're using image URLs
-    createdBy: { type: String, required: true },
-    completed: { type: Boolean, default: false }, // ⬅️ New field added
+    image: String,
+    createdBy: {
+  type: String, // change from ObjectId to String
+  required: true,
+},
+    completed: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
