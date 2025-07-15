@@ -10,5 +10,24 @@ cloudinary.config({
 });
 
 
+// ✅ Upload Function
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "bucketlist", // You can remove this if you want default folder
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
 
-module.exports = cloudinary;
+    // Write the buffer to the upload stream
+    stream.end(buffer);
+  });
+};
+
+module.exports = {  cloudinary,uploadToCloudinary };
+
