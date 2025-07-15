@@ -16,11 +16,14 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://openup-0vcs.onrender.com/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, password }),
-      });
+      const res = await fetch(
+        "https://openup-0vcs.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, password }),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) {
