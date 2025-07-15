@@ -1,48 +1,57 @@
 const express = require("express");
 const BucketItem = require("../models/BucketItem");
-const User = require("../models/User");
-const cloudinary = require("../config/cloudinary");
 const upload = require("../utils/multer");
+const { cloudinary ,uploadToCloudinary } = require("../config/cloudinary"); // ✅ Import helper
+const User = require("../models/User");
 
 const router = express.Router();
 
-// ✅ Create bucket list item with image
+// ✅ POST /api/bucketlist
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { text, description, userId } = req.body;
+    const { text, description, username } = req.body;
 
-    console.log("Received values =>", { text, description, userId });
-
-    if (!text || !userId) {
-      return res.status(400).json({ message: "Missing text or userId" });
+    // ✅ Required fields check
+    if (!text || !username) {
+      return res.status(400).json({ message: "Missing text or username" });
     }
 
+    // ✅ Find user by username
+    const user = await User.findOne({ name: username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Handle image upload
     let imageUrl = "";
-
     if (req.file) {
-      const base64Image = `data:${
-        req.file.mimetype
-      };base64,${req.file.buffer.toString("base64")}`;
-
-      const result = await cloudinary.uploader.upload(base64Image);
-      imageUrl = result.secure_url;
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer);
+        imageUrl = uploadResult.secure_url;
+      } catch (uploadErr) {
+        console.error("❌ Cloudinary Upload Error:", uploadErr.message);
+        return res.status(500).json({ message: "Image upload failed" });
+      }
     }
 
+    // ✅ Create new dream item
     const newItem = new BucketItem({
       text,
       description,
-      createdBy: userId, // Should match schema!
+      createdBy: user.name,       // store username
+      createdById: user._id,      // optional: store user ObjectId too
       image: imageUrl,
     });
 
     const savedItem = await newItem.save();
-    res.status(201).json(savedItem);
+
+    res.status(201).json({
+      message: "✅ Dream posted!",
+      item: savedItem,
+    });
   } catch (err) {
     console.error("❌ POST /bucketlist Error:", err.message);
-    res.status(500).json({
-      message: "Server error during bucket item creation",
-      error: err.message,
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
