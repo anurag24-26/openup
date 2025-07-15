@@ -15,7 +15,10 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Update with frontend URL
+    origin: [
+      "http://localhost:5173",
+      "https://humareapne.vercel.app/",  // replace with actual frontend
+    ], // ✅ Update with frontend URL
     credentials: true,               // ✅ Allow sending cookies
   })
 );
