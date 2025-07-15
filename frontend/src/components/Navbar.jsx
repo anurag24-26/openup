@@ -12,15 +12,43 @@ export default function Navbar({ successMessage }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
+  // ✅ Fetch logged-in user from backend
   useEffect(() => {
-    const storedName = localStorage.getItem("userName");
-    setUsername(storedName || "");
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("https://openup-0vcs.onrender.com/api/auth/me", {
+  method: "GET",
+  credentials: "include",   // ✅ ensures cookie is sent
+});
+
+        const data = await res.json();
+        if (res.ok) {
+          setUsername(data.user.name);
+        } else {
+          setUsername("");
+        }
+      } catch (err) {
+        console.error("User fetch error:", err);
+        setUsername("");
+      }
+    };
+
+    fetchUser();
   }, [location]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userId");
-    navigate("/login");
+  // ✅ Logout via cookie-clearing API
+  const handleLogout = async () => {
+    try {
+      await fetch("https://openup-0vcs.onrender.com/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      setUsername("");
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
 
   const navItems = [
@@ -57,10 +85,7 @@ export default function Navbar({ successMessage }) {
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
               exit={{ scaleX: 0, opacity: 0 }}
-              transition={{
-                duration: 0.4,
-                ease: "easeInOut",
-              }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="origin-center w-full text-center text-white font-semibold text-sm sm:text-base tracking-wide"
             >
               🌟 {successMessage}
@@ -109,11 +134,13 @@ export default function Navbar({ successMessage }) {
               {/* Username + Logout */}
               <div className="flex items-center gap-4">
                 <span className="text-sm font-semibold text-white capitalize">
-                  {username}
+                  {username || "Guest"}
                 </span>
-                <button onClick={handleLogout} title="Logout">
-                  <ArrowLeftOnRectangleIcon className="h-5 w-5 text-white/70 hover:text-white" />
-                </button>
+                {username && (
+                  <button onClick={handleLogout} title="Logout">
+                    <ArrowLeftOnRectangleIcon className="h-5 w-5 text-white/70 hover:text-white" />
+                  </button>
+                )}
               </div>
             </motion.div>
           )}
