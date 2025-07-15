@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Login() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // New state to track login status
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -18,6 +18,7 @@ export default function Login() {
     try {
       const res = await fetch("https://openup-0vcs.onrender.com/api/auth/login", {
         method: "POST",
+        credentials: "include", // ✅ Include cookies
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, password }),
       });
@@ -28,15 +29,13 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem("userName", data.user.name);
-      localStorage.setItem("user_Id", data.user._id);
-
       alert("✅ Login Successful!");
       navigate("/dashboard");
     } catch (err) {
+      console.error("Login Error:", err);
       alert("❌ Network error during login.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
