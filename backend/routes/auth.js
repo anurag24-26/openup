@@ -63,9 +63,9 @@ router.post("/login", async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false, // Change to true in production (HTTPS)
-        sameSite: "strict",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        secure: true, // ✅ important for Render
+        sameSite: "None", // ✅ allow cross-origin
+        maxAge: 24 * 60 * 60 * 1000,
       })
       .status(200)
       .json({
@@ -79,6 +79,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 });
+
 
 // ✅ Logout Route (clears cookie)
 router.post("/logout", (req, res) => {
