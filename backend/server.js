@@ -17,7 +17,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://humareapne.vercel.app/",  // replace with actual frontend
+      "https://humareapne.vercel.app",  // replace with actual frontend
     ], // ✅ Update with frontend URL
     credentials: true,               // ✅ Allow sending cookies
   })
