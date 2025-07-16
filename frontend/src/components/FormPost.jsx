@@ -67,10 +67,10 @@ export default function FormPost({ setSuccessMessage }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white text-black px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-pink-100 to-red-300 text-black px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg p-8 border border-black rounded-xl shadow-lg space-y-6 bg-white"
+        className="w-full max-w-lg p-8 border border-black rounded-xl shadow-lg space-y-6 bg-gradient-to-r from-pink-100 to-red-300"
       >
         <h2 className="text-2xl font-bold text-center">Add a Dream ✍️</h2>
 

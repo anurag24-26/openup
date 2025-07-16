@@ -4,11 +4,11 @@ import {
   ClockIcon,
   RocketLaunchIcon,
 } from "@heroicons/react/24/solid";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function BucketList() {
   const [userTasks, setUserTasks] = useState([]);
-  const [activeUserIndex, setActiveUserIndex] = useState(0); // Switch between users
+  const [activeUserIndex, setActiveUserIndex] = useState(0);
 
   useEffect(() => {
     const fetchUserTasks = async () => {
@@ -26,9 +26,7 @@ export default function BucketList() {
   const allDreams = userTasks.flatMap((u) => u.tasks);
   const totalDreams = allDreams.length;
   const completedDreams = allDreams.filter((d) => d.completed).length;
-  const percentage = totalDreams
-    ? ((completedDreams / totalDreams) * 100).toFixed(0)
-    : 0;
+  const percentage = totalDreams ? ((completedDreams / totalDreams) * 100).toFixed(0) : 0;
 
   const markCompleted = async (id) => {
     try {
@@ -49,146 +47,135 @@ export default function BucketList() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 px-4 py-10 font-sans">
-      {/* Shared Progress */}
+    <div className="min-h-screen px-4 py-10 bg-gradient-to-br from-[#ffdde1] via-[#ee9ca7] to-[#fad0c4] font-sans">
+      {/* Progress */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="max-w-xl mx-auto text-center space-y-4 mb-10"
       >
-        <h1 className="text-3xl mt-10 sm:text-4xl font-bold text-gray-800">
-          Humare Sapne 🌙
+        <h1 className="text-3xl mt-10 sm:text-2xl font-extrabold text-gray-900">
+          🎯 Humare Dreams...
         </h1>
-        <p className="text-gray-600 text-sm sm:text-lg">
+        <p className="text-gray-800 text-lg sm:text-xl">
           Completed <strong>{completedDreams}</strong> of{" "}
           <strong>{totalDreams}</strong> dreams
         </p>
-
-        {/* Animated Progress Bar */}
-        <div className="relative w-full h-4 rounded-full bg-gray-200 overflow-hidden">
+        <div className="relative w-full h-5 rounded-full bg-white/40 overflow-hidden shadow-inner">
           <motion.div
-            className="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
+            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#6EE7B7] via-[#3B82F6] to-[#9333EA] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${percentage}%` }}
             transition={{ duration: 1.2 }}
           />
         </div>
-        <p className="text-sm text-gray-500">{percentage}% completed</p>
+        <motion.p
+          className="text-sm text-gray-700"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          {percentage}% completed
+        </motion.p>
       </motion.div>
 
-      {/* Switch Buttons for User View */}
+      {/* User Switch */}
       {userTasks.length > 1 && (
-        <div className="flex justify-center mb-8 gap-2 sm:hidden">
+        <div className="flex justify-center mb-8 flex-wrap gap-2">
           {userTasks.map((u, index) => (
-            <button
+            <motion.button
               key={u.user._id}
               onClick={() => setActiveUserIndex(index)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition duration-300 border border-white shadow ${
                 activeUserIndex === index
-                  ? "bg-blue-600 text-white"
-                  : "bg-white/40 text-black"
+                  ? "bg-white text-gray-800"
+                  : "bg-white/20 text-white/90"
               }`}
+              whileTap={{ scale: 0.95 }}
             >
               {u.user.name}
-            </button>
+            </motion.button>
           ))}
         </div>
       )}
 
-      {/* Dreams Grid */}
-      <div className="grid sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {userTasks.length > 0 &&
-          userTasks.map(({ user, tasks }, idx) =>
-            // Show only selected user in mobile (show all in desktop)
-            idx === activeUserIndex || window.innerWidth >= 640 ? (
-              <div key={user._id} className="space-y-6">
-                <motion.h3
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-lg font-semibold border-b text-center pb-2 text-gray-700"
+      {/* Dreams List */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        {userTasks.map(({ user, tasks }, idx) =>
+          idx === activeUserIndex || window.innerWidth >= 640 ? (
+            <div key={user._id} className="space-y-6">
+              <motion.h3
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-xl text-center font-semibold text-white drop-shadow mb-2"
+              >
+                🚀 {user.name}'s Dreams
+              </motion.h3>
+
+              {tasks.map((dream, i) => (
+                <motion.div
+                  key={dream._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`relative rounded-3xl p-4 bg-white/30 backdrop-blur-md shadow-xl border border-white/30 overflow-hidden transition hover:scale-[1.01] ${
+                    dream.completed ? "opacity-60" : ""
+                  }`}
                 >
-                  {user.name}'s Dreams{" "}
-                  <RocketLaunchIcon className="inline w-5 h-5 text-blue-500" />
-                </motion.h3>
+                  {/* Image */}
+                  {dream.image ? (
+                    <img
+                      src={dream.image}
+                      alt={dream.text}
+                      className="w-full h-40 object-cover rounded-2xl mb-3"
+                    />
+                  ) : (
+                    <div className="h-40 rounded-2xl bg-white/20 flex items-center justify-center text-sm text-gray-800 mb-3">
+                      No image uploaded
+                    </div>
+                  )}
 
-                <div className="space-y-6">
-                  {tasks.map((dream, i) => (
-                    <motion.div
-                      key={dream._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className={`relative rounded-3xl border border-white/20 backdrop-blur-md bg-white/20 shadow-xl overflow-hidden transition duration-300 transform hover:scale-[1.02] ${
-                        dream.completed ? "opacity-60" : ""
-                      }`}
-                    >
-                      {/* Background Overlay */}
-                      <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/30 via-purple-100/10 to-pink-100/20 backdrop-blur-3xl rounded-3xl"></div>
+                  {/* Text */}
+                  <div className="space-y-2 text-gray-900">
+                    <h3 className="text-lg font-bold">{dream.text}</h3>
+                    <p className="text-sm text-gray-700">{dream.description}</p>
+                    <div className="text-xs text-gray-600">
+                      Added on {new Date(dream.createdAt).toLocaleDateString("en-IN")}
+                    </div>
 
-                      {/* Image */}
-                      {dream.image ? (
-                        <div className="relative w-full h-44 sm:h-52 z-10">
-                          <img
-                            src={dream.image}
-                            alt={dream.text}
-                            className="w-full h-full object-cover rounded-t-3xl opacity-90"
-                          />
-                        </div>
-                      ) : (
-                        <div className="relative w-full h-44 flex items-center justify-center text-sm text-gray-500 bg-white/10 z-10">
-                          No image uploaded
-                        </div>
-                      )}
-
-                      {/* Content */}
-                      <div className="relative z-10 p-5 space-y-3 text-black-800">
-                        <h3 className="text-xl font-bold">{dream.text}</h3>
-                        <p className="text-sm text-black-300">
-                          {dream.description}
-                        </p>
-                        <div className="text-xs text-black/60">
-                          Added on{" "}
-                          {new Date(dream.createdAt).toLocaleDateString(
-                            "en-IN"
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between pt-2">
-                          <span
-                            className={`text-sm font-medium ${
-                              dream.completed
-                                ? "text-green-300"
-                                : "text-yellow-500"
-                            }`}
-                          >
-                            {dream.completed ? "✅ Completed" : "🕓 Pending"}
-                          </span>
-                          <button
-                            onClick={() => markCompleted(dream._id)}
-                            disabled={dream.completed}
-                            className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold transition ${
-                              dream.completed
-                                ? "bg-white/30 text-white cursor-not-allowed"
-                                : "bg-blue-500 hover:bg-blue-600 text-white"
-                            }`}
-                          >
-                            {dream.completed ? (
-                              <CheckCircleIcon className="w-5 h-5" />
-                            ) : (
-                              <ClockIcon className="w-5 h-5" />
-                            )}
-                            {dream.completed ? "Done" : "Complete"}
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            ) : null
-          )}
+                    <div className="flex justify-between items-center pt-3">
+                      <span
+                        className={`text-sm font-medium ${
+                          dream.completed ? "text-green-500" : "text-yellow-600"
+                        }`}
+                      >
+                        {dream.completed ? "✅ Completed" : "🕓 Pending"}
+                      </span>
+                      <button
+                        onClick={() => markCompleted(dream._id)}
+                        disabled={dream.completed}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold transition ${
+                          dream.completed
+                            ? "bg-black/40 text-green cursor-not-allowed"
+                            : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:brightness-110"
+                        }`}
+                      >
+                        {dream.completed ? (
+                          <CheckCircleIcon className="w-5 h-5" />
+                        ) : (
+                          <ClockIcon className="w-5 h-5" />
+                        )}
+                        {dream.completed ? "Done" : "Complete"}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : null
+        )}
       </div>
     </div>
   );
