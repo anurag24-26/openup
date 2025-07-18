@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   CheckCircleIcon,
   ClockIcon,
-  RocketLaunchIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function BucketList() {
   const [userTasks, setUserTasks] = useState([]);
   const [activeUserIndex, setActiveUserIndex] = useState(0);
+  const [fullImage, setFullImage] = useState(null);
 
   useEffect(() => {
     const fetchUserTasks = async () => {
@@ -126,11 +127,20 @@ export default function BucketList() {
                 >
                   {/* Image */}
                   {dream.image ? (
-                    <img
-                      src={dream.image}
-                      alt={dream.text}
-                      className="w-full h-40 object-cover rounded-2xl mb-3"
-                    />
+                    <>
+                      <img
+                        src={dream.image}
+                        alt={dream.text}
+                        className="w-full h-40 object-cover rounded-2xl mb-3 cursor-pointer"
+                        onClick={() => setFullImage(dream.image)}
+                      />
+                      <p
+                        className="text-xs text-blue-600 underline cursor-pointer mb-2"
+                        onClick={() => setFullImage(dream.image)}
+                      >
+                        Click to view full image
+                      </p>
+                    </>
                   ) : (
                     <div className="h-40 rounded-2xl bg-white/20 flex items-center justify-center text-sm text-gray-800 mb-3">
                       No image uploaded
@@ -143,6 +153,9 @@ export default function BucketList() {
                     <p className="text-sm text-gray-700">{dream.description}</p>
                     <div className="text-xs text-gray-600">
                       Added on {new Date(dream.createdAt).toLocaleDateString("en-IN")}
+                    </div>
+                    <div className="text-xs text-gray-700">
+                      Created by: <strong>{dream.username}</strong>
                     </div>
 
                     <div className="flex justify-between items-center pt-3">
@@ -177,6 +190,22 @@ export default function BucketList() {
           ) : null
         )}
       </div>
+
+      {/* Full Image Preview */}
+      {fullImage && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
+          onClick={() => setFullImage(null)}
+        >
+          <button
+            className="absolute top-5 right-5 text-white bg-black/60 p-2 rounded-full"
+            onClick={() => setFullImage(null)}
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
+          <img src={fullImage} alt="Full Preview" className="max-w-full max-h-[90vh] rounded-xl" />
+        </div>
+      )}
     </div>
   );
 }

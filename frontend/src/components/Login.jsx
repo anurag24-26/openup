@@ -75,7 +75,7 @@ export default function Login() {
       {/* 💖 Login Form */}
       <div className="w-full max-w-md p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl text-white space-y-6 z-10">
         <h2 className="text-4xl font-bold text-center tracking-wide drop-shadow">
-          Welcome Back 💗
+          Welcome Back 
         </h2>
 
         <input
